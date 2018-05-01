@@ -11,8 +11,6 @@ use gobject_subclass::object::*;
 
 use cell_renderer::*;
 
-pub trait CellRendererCustomImpl: 'static {}
-
 pub struct CellRendererCustom {
     text: RefCell<String>,
 }
@@ -26,21 +24,25 @@ static PROPERTIES: [Property; 1] = [Property::String(
 )];
 
 impl CellRendererCustom {
-    pub fn new() -> CellRenderer {
-        use glib::object::Downcast;
-
+    pub fn get_type() -> glib::Type {
         static ONCE: Once = ONCE_INIT;
         static mut TYPE: glib::Type = glib::Type::Invalid;
 
         ONCE.call_once(|| {
-            let static_instance = CellRendererCustomStatic::default();
+            let static_instance = CellRendererCustomStatic;
             let t = register_type(static_instance);
             unsafe {
                 TYPE = t;
             }
         });
 
-        unsafe { glib::Object::new(TYPE, &[]).unwrap().downcast_unchecked() }
+        unsafe { TYPE }
+    }
+
+    pub fn new() -> CellRenderer {
+        use glib::object::Downcast;
+
+        unsafe { glib::Object::new(Self::get_type(), &[]).unwrap().downcast_unchecked() }
     }
 
     fn class_init(klass: &mut CellRendererClass) {
@@ -115,8 +117,7 @@ impl CellRendererImpl<CellRenderer> for CellRendererCustom {
     }
 }
 
-#[derive(Default)]
-pub struct CellRendererCustomStatic {}
+pub struct CellRendererCustomStatic;
 
 impl ImplTypeStatic<CellRenderer> for CellRendererCustomStatic {
     fn get_name(&self) -> &str {
@@ -130,6 +131,4 @@ impl ImplTypeStatic<CellRenderer> for CellRendererCustomStatic {
     fn class_init(&self, klass: &mut CellRendererClass) {
         CellRendererCustom::class_init(klass);
     }
-
-    fn type_init(&self, _token: &TypeInitToken, _type: glib::Type) {}
 }
