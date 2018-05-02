@@ -1,4 +1,3 @@
-use std::cell::RefCell;
 use std::mem;
 use std::ptr;
 use std::sync::{Once, ONCE_INIT};
@@ -16,6 +15,9 @@ use gtk::prelude::*;
 
 mod imp {
     use super::*;
+
+    use std::cell::RefCell;
+
     use gobject_subclass::object::*;
 
     use cell_renderer::*;
@@ -59,6 +61,7 @@ mod imp {
             Box::new(imp)
         }
 
+        // Useless dummy function to show how to expose APIs
         pub fn set_text(&self, text: &str) {
             self.text.replace(String::from(text));
         }
@@ -143,6 +146,7 @@ mod imp {
 
 use cell_renderer;
 use gobject_subclass::object::*;
+use std::ops;
 
 glib_wrapper! {
     pub struct CellRendererCustom(Object<imp::CellRendererCustom>):
@@ -164,11 +168,20 @@ impl CellRendererCustom {
                 .downcast_unchecked()
         }
     }
+}
 
-    pub fn set_text(&self, text: &str) {
-        let base = self.clone().upcast::<cell_renderer::CellRenderer>();
-        let imp = base.get_impl();
-        let imp = imp.downcast_ref::<imp::CellRendererCustom>().unwrap();
-        imp.set_text(text);
+// TODO: This one should probably get a macro
+impl ops::Deref for CellRendererCustom {
+    type Target = imp::CellRendererCustom;
+
+    fn deref(&self) -> &Self::Target {
+        unsafe {
+            let base: cell_renderer::CellRenderer = from_glib_borrow(self.to_glib_none().0);
+            let imp = base.get_impl();
+            let imp = imp.downcast_ref::<imp::CellRendererCustom>().unwrap();
+            // Cast to a raw pointer to get us an appropriate lifetime: the compiler
+            // can't know that the lifetime of base is the same as the one of self
+            &*(imp as *const imp::CellRendererCustom)
+        }
     }
 }
