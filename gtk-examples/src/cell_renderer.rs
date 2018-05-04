@@ -94,6 +94,7 @@ pub type CellRendererClass = ClassStruct<CellRenderer>;
 
 // FIXME: Boilerplate
 unsafe impl CellRendererClassExt<CellRenderer> for CellRendererClass {}
+unsafe impl ObjectClassExt<CellRenderer> for CellRendererClass {}
 
 #[macro_export]
 macro_rules! box_cell_renderer_impl(
@@ -120,17 +121,13 @@ box_cell_renderer_impl!(CellRendererImpl);
 
 impl ObjectType for CellRenderer {
     const NAME: &'static str = "RsCellRenderer";
-    type GlibType = gtk_ffi::GtkCellRenderer;
-    type GlibClassType = gtk_ffi::GtkCellRendererClass;
+    type ParentType = gtk::CellRenderer;
     type ImplType = Box<CellRendererImpl<Self>>;
     type InstanceStructType = InstanceStruct<Self>;
 
-    fn glib_type() -> glib::Type {
-        unsafe { from_glib(gtk_ffi::gtk_cell_renderer_get_type()) }
-    }
-
     fn class_init(token: &ClassInitToken, klass: &mut CellRendererClass) {
-        klass.override_vfuncs(token);
+        ObjectClassExt::override_vfuncs(klass, token);
+        CellRendererClassExt::override_vfuncs(klass, token);
     }
 
     object_type_fns!();

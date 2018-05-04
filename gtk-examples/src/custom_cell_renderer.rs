@@ -42,7 +42,11 @@ impl CellRendererCustom {
     pub fn new() -> CellRenderer {
         use glib::object::Downcast;
 
-        unsafe { glib::Object::new(Self::get_type(), &[]).unwrap().downcast_unchecked() }
+        unsafe {
+            glib::Object::new(Self::get_type(), &[])
+                .unwrap()
+                .downcast_unchecked()
+        }
     }
 
     fn class_init(klass: &mut CellRendererClass) {
