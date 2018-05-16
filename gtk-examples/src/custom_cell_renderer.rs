@@ -20,7 +20,7 @@ mod imp {
 
     use gobject_subclass::object::*;
 
-    use cell_renderer::*;
+    use gtk_subclass::cell_renderer::*;
 
     pub struct CellRendererCustom {
         text: RefCell<String>,
@@ -144,7 +144,7 @@ mod imp {
     }
 }
 
-use cell_renderer;
+use gtk_subclass::cell_renderer;
 use gobject_subclass::object::*;
 use std::ops;
 
