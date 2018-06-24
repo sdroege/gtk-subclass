@@ -143,7 +143,6 @@ unsafe extern "C" fn cell_renderer_render<T: CellRendererBase>(
 ) where
     T::ImplType: CellRendererImpl<T>,
 {
-    callback_guard!();
     floating_reference_guard!(ptr);
     let cell_renderer = &*(ptr as *mut T::InstanceStructType);
     let wrap: T = from_glib_borrow(ptr as *mut T::InstanceStructType);

@@ -139,7 +139,6 @@ unsafe extern "C" fn application_window_added<T: GtkApplicationBase>(
 where
     T::ImplType: GtkApplicationImpl<T>,
 {
-    callback_guard!();
     floating_reference_guard!(ptr);
     let application = &*(ptr as *mut T::InstanceStructType);
     let wrap: T = from_glib_borrow(ptr as *mut T::InstanceStructType);
@@ -154,7 +153,6 @@ unsafe extern "C" fn application_window_removed<T: GtkApplicationBase>(
 where
     T::ImplType: GtkApplicationImpl<T>,
 {
-    callback_guard!();
     floating_reference_guard!(ptr);
     let application = &*(ptr as *mut T::InstanceStructType);
     let wrap: T = from_glib_borrow(ptr as *mut T::InstanceStructType);
