@@ -36,8 +36,8 @@ use gio::prelude::*;
 use gtk::prelude::*;
 
 use gobject_subclass::object::*;
-use gio_subclass::application::{Application as GApplication, ApplicationImpl, ApplicationBase};
-use gtk_subclass::application::*;
+use gio_subclass::application as gio_application;
+use gtk_subclass::application;
 
 
 
@@ -84,18 +84,18 @@ mod imp {
             unsafe { TYPE }
         }
 
-        fn class_init(klass: &mut ApplicationClass) {
+        fn class_init(klass: &mut application::ApplicationClass) {
             klass.install_properties(&PROPERTIES);
         }
 
-        fn init(_application: &Application) -> Box<GtkApplicationImpl<Application>> {
+        fn init(_application: &application::Application) -> Box<application::ApplicationImpl<application::Application>> {
             let imp = Self {
                 window_was_visible: Rc::new(RefCell::new(false))
             };
             Box::new(imp)
         }
 
-        fn build_ui(&self, application: &Application)
+        fn build_ui(&self, application: &application::Application)
         {
             let window = gtk::ApplicationWindow::new(application);
 
@@ -122,33 +122,34 @@ mod imp {
         }
     }
 
-    impl ObjectImpl<Application> for SimpleApplication {}
+    impl ObjectImpl<application::Application> for SimpleApplication {}
 
-    impl ApplicationImpl<Application> for SimpleApplication
-    {
-        fn startup(&self, application: &Application){
+    impl gio_application::ApplicationImpl<application::Application> for SimpleApplication
+    {   
+        fn startup(&self, application: &application::Application){
+            use gio_subclass::application::ApplicationBase;
             application.parent_startup();
 
             self.build_ui(application);
         }
     }
 
-    impl GtkApplicationImpl<Application> for SimpleApplication {}
+    impl application::ApplicationImpl<application::Application> for SimpleApplication {}
 
 
     pub struct SimpleApplicationStatic;
 
-    impl ImplTypeStatic<Application> for SimpleApplicationStatic
+    impl ImplTypeStatic<application::Application> for SimpleApplicationStatic
     {
         fn get_name(&self) -> &str {
             "SimpleApplication"
         }
 
-        fn new(&self, application: &Application) -> Box<GtkApplicationImpl<Application>> {
+        fn new(&self, application: &application::Application) -> Box<application::ApplicationImpl<application::Application>> {
             SimpleApplication::init(application)
         }
 
-        fn class_init(&self, klass: &mut ApplicationClass) {
+        fn class_init(&self, klass: &mut application::ApplicationClass) {
             SimpleApplication::class_init(klass);
         }
     }
@@ -157,8 +158,8 @@ mod imp {
 
 glib_wrapper! {
     pub struct SimpleApplication(Object<imp::SimpleApplication>):
-        [Application => InstanceStruct<Application>,
-         GApplication => InstanceStruct<GApplication>,
+        [application::Application => InstanceStruct<application::Application>,
+         gio_application::Application => InstanceStruct<gio_application::Application>,
          gtk::Application => gtk_ffi::GtkApplication,
          gio::Application => gio_ffi::GApplication,
          gio::ActionGroup => gio_ffi::GActionGroup,
@@ -194,7 +195,7 @@ impl Deref for SimpleApplication {
     fn deref(&self) -> &Self::Target {
         unsafe {
 
-            let base: Application = from_glib_borrow(self.to_glib_none().0);
+            let base: application::Application = from_glib_borrow(self.to_glib_none().0);
             let imp = base.get_impl();
             let imp = imp.downcast_ref::<imp::SimpleApplication>().unwrap();
             // Cast to a raw pointer to get us an appropriate lifetime: the compiler

@@ -1,0 +1,51 @@
+[options]
+girs_dir = "../gir-files"
+library = "Gtk"
+library_export = "gtk-subclass"
+version = "3.0"
+min_cfg_version = "3.4"
+target_path = "./gtk-subclass"
+work_mode = "subclass"
+external_libraries = [
+   "GLib",
+   "Gio",
+   "Gdk",
+   "Pango",
+]
+
+generate = [
+"Gtk.Application"
+]
+
+manual = [
+    "GLib.Error",
+    "Gdk.Screen",
+    "Gdk.Window",
+    "GdkPixbuf.Pixbuf",
+    "GdkPixbuf.PixbufAnimation",
+    "Gio.Application",
+    "GLib.Variant",
+    "GLib.VariantTy",
+    "GLib.VariantType",
+    "GObject.Value",
+    "Gtk.Actionable",
+    "Gtk.Container",
+    "Gtk.Dialog",
+    "Gtk.RecentData",
+    "Gtk.RecentInfo",
+    "Gtk.Widget",
+    "Gtk.Window",
+    "Gdk.Rectangle",
+#    "Gdk.RGBA",
+    "cairo.RectangleInt",
+]
+
+ignore = [
+    "Gtk.Activatable",
+]
+
+
+# [[object]]
+# name = "Gtk.Application"
+# status = "generate"
+# subclass_impl_trait_name = "GtkApplicationImpl"

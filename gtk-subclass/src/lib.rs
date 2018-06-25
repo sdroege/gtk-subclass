@@ -14,11 +14,14 @@ extern crate gtk_sys as gtk_ffi;
 extern crate gio_sys as gio_ffi;
 extern crate pango;
 
+extern crate libc;
+
 #[macro_use]
 extern crate gobject_subclass;
 
 #[macro_use]
 extern crate gio_subclass;
 
+mod auto;
+pub use auto::application;
 pub mod cell_renderer;
-pub mod application;
