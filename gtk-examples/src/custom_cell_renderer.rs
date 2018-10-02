@@ -103,7 +103,7 @@ mod imp {
             let layout = widget
                 .create_pango_layout(self.text.borrow().as_str())
                 .unwrap();
-            let sc = widget.get_style_context().unwrap();
+            let sc = widget.get_style_context();
             let (padx, pady) = renderer.get_padding();
 
             cr.save();
